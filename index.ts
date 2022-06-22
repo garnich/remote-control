@@ -1,9 +1,35 @@
-import Jimp from 'jimp';
-import {httpServer} from './src/http_server/index.js';
-import robot from 'robotjs';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
+import { env } from 'process'
+import { config } from 'dotenv';
 
-const HTTP_PORT = 3000;
+import { httpServer } from './src/http_server/index';
+import { baseController } from './src/controllers/baseController';
 
-console.log(`Start static http server on the ${HTTP_PORT} port!`);
-httpServer.listen(HTTP_PORT);
+import { STATIC_SERVER_START_MSG, WS_SERVER_START_MSG, CLIENT_ERROR_MSG, WS_ERROR_MSG } from './src/constants';
+ 
+config();
+
+const HTTP_PORT: number = Number(env.CLIENT_PORT) || 3000;
+const WS_PORT: number = Number(env.WS_PORT) || 8080;
+
+try {
+    httpServer.listen(HTTP_PORT);
+    
+    console.log(`${STATIC_SERVER_START_MSG} ${HTTP_PORT}`);
+} catch (e) {
+    console.log(`${CLIENT_ERROR_MSG}`, e);
+}
+
+try {
+    const wss = new WebSocketServer({ port: WS_PORT });
+
+    wss.on('connection', (ws: WebSocket) => {
+      ws.on('message', (data: string) => {
+        baseController(ws, data.toString());
+      });
+    });
+
+    console.log(`${WS_SERVER_START_MSG} ${WS_PORT}`);
+  } catch (e) {
+    console.log(`${WS_ERROR_MSG}`, e);
+  }
