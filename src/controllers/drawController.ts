@@ -5,27 +5,29 @@ import { drawCircleHelper, drawSquareHelper, drawRectangleHelper } from '../help
 
 import { WRONG_PARAM_MSG, DRAW } from '../constants';
 
-const drawCircle = (offset: number, ws: WebSocket) => {
+const drawCircle = (offset: number, ws: WebSocket): void => {
   try {    
-    drawCircleHelper(offset, robot)
+    drawCircleHelper(offset, robot);
+
     ws.send(DRAW.CIRCLE);
   } catch (e) {
     console.log(WRONG_PARAM_MSG);
   }
 };
 
-const drawRectangle = (measurements: number[], ws: WebSocket) => {
+const drawRectangle = (measurements: number[], ws: WebSocket): void => {
   try {    
     drawRectangleHelper(measurements, robot);
+
     ws.send(`${DRAW.RECTANGLE} ${measurements[0]} ${measurements[1]}`);
   } catch (e) {
     console.log(WRONG_PARAM_MSG);
   }
 };
 
-const drawSquare = (offset: number, ws: WebSocket) => {
+const drawSquare = (offset: number, ws: WebSocket): void => {
   try {   
-    drawSquareHelper(offset, robot)
+    drawSquareHelper(offset, robot);
 
     ws.send(DRAW.SQUARE);
   } catch (e) {

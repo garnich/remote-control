@@ -1,15 +1,18 @@
+import { ICoordinates } from '../types';
+
 const drawCircleHelper = (radius: number, robot: any): void => {
-    const {x ,y} = robot.getMousePos();
-    const start_X_Pos = x + (radius * Math.cos(0));
-    const start_Y_Pos = y + (radius * Math.sin(0));
+    const { x, y }: ICoordinates = robot.getMousePos();
+
+    const start_X_Pos: number = x + (radius * Math.cos(0));
+    const start_Y_Pos: number = y + (radius * Math.sin(0));
     
     robot.dragMouse(start_X_Pos, start_Y_Pos);
 
     robot.mouseToggle("down");
 
     for (let i = 0.01; i <= Math.PI * 2; i += 0.01) {
-        const drawing_X_coord = x + (radius * Math.cos(i));
-        const drawing_Y_coord = y + (radius * Math.sin(i));
+        const drawing_X_coord: number = x + (radius * Math.cos(i));
+        const drawing_Y_coord: number = y + (radius * Math.sin(i));
         
         robot.dragMouse(drawing_X_coord, drawing_Y_coord);
     }
@@ -18,7 +21,7 @@ const drawCircleHelper = (radius: number, robot: any): void => {
 };
 
 const drawSquareHelper = (size: number, robot: any): void => {
-    const {x ,y} = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
     
     robot.mouseToggle("down");
 
@@ -43,7 +46,7 @@ const drawSquareHelper = (size: number, robot: any): void => {
 };
 
 const drawRectangleHelper = (size: number[], robot: any): void => {
-    const {x ,y} = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
     
     robot.mouseToggle("down");
 

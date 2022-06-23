@@ -1,11 +1,13 @@
 import { WebSocket } from 'ws';
 import robot from 'robotjs';
 
+import { ICoordinates } from '../types';
+
 import { WRONG_PARAM_MSG, MOUSE } from '../constants';
 
-const moveUp = (offset: number, ws: WebSocket) => {
+const moveUp = (offset: number, ws: WebSocket): void => {
   try {
-    const { x, y } = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
 
     robot.moveMouse(x, y - offset);
 
@@ -15,9 +17,9 @@ const moveUp = (offset: number, ws: WebSocket) => {
   }
 };
 
-const moveDown = (offset: number, ws: WebSocket) => {
+const moveDown = (offset: number, ws: WebSocket): void => {
   try {
-    const { x, y } = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
 
     robot.moveMouse(x, y + offset);
 
@@ -27,9 +29,9 @@ const moveDown = (offset: number, ws: WebSocket) => {
   }
 };
 
-const moveLeft = (offset: number, ws: WebSocket) => {
+const moveLeft = (offset: number, ws: WebSocket): void => {
   try {   
-    const { x, y } = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
 
     robot.moveMouse(x - offset, y);
 
@@ -39,9 +41,9 @@ const moveLeft = (offset: number, ws: WebSocket) => {
   }
 };
 
-const moveRight = (offset: number, ws: WebSocket) => {
+const moveRight = (offset: number, ws: WebSocket): void => {
   try {
-    const { x, y } = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
 
     robot.moveMouse(x + offset, y);
 
@@ -51,11 +53,11 @@ const moveRight = (offset: number, ws: WebSocket) => {
   }
 };
 
-const getPosition = (ws: WebSocket) => {
+const getPosition = (ws: WebSocket): void => {
   try {
-    const { x, y } = robot.getMousePos();
+    const { x, y }: ICoordinates = robot.getMousePos();
 
-    const pos = `${MOUSE.POS} ${x},${y}`;
+    const pos: string = `${MOUSE.POS} ${x},${y}`;
     
     ws.send(pos);
   } catch (e) {

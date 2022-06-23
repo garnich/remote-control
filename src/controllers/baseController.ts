@@ -6,11 +6,11 @@ import { printScreenController } from './printScreenController';
  
 import { WRONG_PARAM_MSG, MOUSE, DRAW, PRINT_SCREEN } from '../constants';
 
-export const baseController = (ws: WebSocket, data: string) => {
+export const baseController = (ws: WebSocket, data: string): void => {
   const param = data.split(' ');
   
-  const coordParam = Number(param[1]);
-  const multiParam = param.length === 3 ? [Number(param[1]), Number(param[2])] : [];
+  const coordParam: number = Number(param[1]);
+  const multiParam: number[] = param.length === 3 ? [Number(param[1]), Number(param[2])] : [];
   
   switch (param[0]) {
     case MOUSE.UP:
