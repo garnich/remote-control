@@ -2,8 +2,9 @@ import { WebSocket } from 'ws';
 
 import { moveUp, moveDown, moveLeft, moveRight, getPosition } from './mouseController';
 import { drawCircle, drawRectangle, drawSquare } from './drawController';
+import { printScreenController } from './printScreenController';
  
-import { WRONG_PARAM_MSG, MOUSE, DRAW } from '../constants';
+import { WRONG_PARAM_MSG, MOUSE, DRAW, PRINT_SCREEN } from '../constants';
 
 export const baseController = (ws: WebSocket, data: string) => {
   const param = data.split(' ');
@@ -35,6 +36,9 @@ export const baseController = (ws: WebSocket, data: string) => {
         break;
     case DRAW.RECTANGLE:
         drawRectangle(multiParam, ws);
+        break;
+    case PRINT_SCREEN:
+        printScreenController(ws);
         break;
     default:
       console.log(WRONG_PARAM_MSG);
