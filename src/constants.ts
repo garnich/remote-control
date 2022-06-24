@@ -21,6 +21,10 @@ const WS_SERVER_START_MSG = 'Websocket server started on port: ';
 const CLIENT_ERROR_MSG = 'HTTP server err ';
 const WS_ERROR_MSG = 'Websocket server err ';
 
+const mainStreamSettings = {
+    decodeStrings: false,
+};
+
 
 export { 
     WRONG_PARAM_MSG, 
@@ -31,5 +35,6 @@ export {
     STATIC_SERVER_START_MSG, 
     WS_SERVER_START_MSG, 
     CLIENT_ERROR_MSG, 
-    WS_ERROR_MSG 
+    WS_ERROR_MSG,
+    mainStreamSettings 
 };

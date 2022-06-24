@@ -1,11 +1,12 @@
-import { WebSocketServer, WebSocket } from 'ws';
+import { WebSocketServer, WebSocket, createWebSocketStream } from 'ws';
+import internal from 'stream';
 import { env } from 'process'
 import { config } from 'dotenv';
 
 import { httpServer } from './src/http_server/index';
 import { baseController } from './src/controllers/baseController';
 
-import { STATIC_SERVER_START_MSG, WS_SERVER_START_MSG, CLIENT_ERROR_MSG, WS_ERROR_MSG } from './src/constants';
+import { STATIC_SERVER_START_MSG, WS_SERVER_START_MSG, CLIENT_ERROR_MSG, WS_ERROR_MSG, mainStreamSettings } from './src/constants';
  
 config();
 
@@ -24,7 +25,7 @@ try {
     const wss = new WebSocketServer({ port: WS_PORT });
 
     wss.on('connection', (ws: WebSocket) => {
-      ws.on('message', (data: string) => {
+      createWebSocketStream(ws, mainStreamSettings).on('data', (data: string) => {
         baseController(ws, data.toString());
       });
     });
