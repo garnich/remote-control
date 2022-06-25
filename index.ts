@@ -6,7 +6,14 @@ import { config } from 'dotenv';
 import { httpServer } from './src/http_server/index';
 import { baseController } from './src/controllers/baseController';
 
-import { STATIC_SERVER_START_MSG, WS_SERVER_START_MSG, CLIENT_ERROR_MSG, WS_ERROR_MSG, mainStreamSettings } from './src/constants';
+import { 
+  STATIC_SERVER_START_MSG, 
+  WS_SERVER_START_MSG, 
+  WS_SERVER_CLOSE_MSG, 
+  CLIENT_ERROR_MSG, 
+  WS_ERROR_MSG, 
+  mainStreamSettings 
+} from './src/constants';
  
 config();
 
@@ -30,7 +37,15 @@ try {
       });
     });
 
+    wss.on('close', () => console.log(WS_SERVER_CLOSE_MSG))
+
     console.log(`${WS_SERVER_START_MSG} ${WS_PORT}`);
+
+    process.on('SIGINT', () => {
+      console.log(WS_SERVER_CLOSE_MSG);
+      wss.close();
+      process.exit();
+    });
   } catch (e) {
     console.log(`${WS_ERROR_MSG}`, e);
   }
