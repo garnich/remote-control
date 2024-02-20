@@ -14,3 +14,9 @@ Thumbs.db
 
 # Logs
 npm-debug.log
+
+# LOCK files due to issue with signature of packages
+yarn.lock
+package-lock.json
+yarn-error.log
+
