@@ -1,13 +1,15 @@
 import DBStorage from '../db/storage';
+import { IUserData } from "../types";
 
-export const regHandler = (data: string): string => {
-    const messageData = JSON.parse(data);
+export const regHandler = (messageData: string, id: number): string => {
 
-    const { name } = messageData;
+    const getData = (msg: string): IUserData => JSON.parse(msg)
 
-    const isUserExist = DBStorage.getUserByName(name);
+    const { name, password } = getData(messageData);
 
-    if (isUserExist) {
+    const isUserNameExist = DBStorage.getUserByName(name);
+
+    if (isUserNameExist) {
         return JSON.stringify({
             type: "reg",
             data: JSON.stringify({
@@ -20,13 +22,13 @@ export const regHandler = (data: string): string => {
         })
     }
 
-    DBStorage.addUser(messageData);
+    DBStorage.addUser({ name, password, id });
 
     return JSON.stringify({
         type: "reg",
         data: JSON.stringify({
             name,
-            index: 0,
+            index: id,
             error: false,
             errorText: '',
         }),
