@@ -27,3 +27,22 @@ export interface IGame {
   idGame: number;
   players: IUser[] | IRoomUsers;
 }
+
+interface IPosition {
+  x: number;
+  y: number;
+}
+
+export interface IShip {
+  position: IPosition;
+  direction: boolean;
+  length: number;
+  type: string;
+  hits?: boolean[];
+}
+
+export interface IShips {
+  gameId: number;
+  ships: IShip[];
+  indexPlayer: number;
+}

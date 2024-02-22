@@ -1,21 +1,24 @@
-import {IUser, IRoom, IGame, IUserData, IRoomUsers} from "../types";
+import {IUser, IRoom, IGame, IUserData, IRoomUsers, IShips } from "../types";
 
 class DBStorage {
     public users: IUserData[];
     public rooms: IRoom[];
     public games: IGame[];
+    public shipsPos: IShips[]
 
     constructor() {
         this.users = [];
         this.rooms = [];
-        this.games = [];
+        this.games = []
+        this.shipsPos = [];
     }
 
     getAll() {
         return {
             users: this.users,
             rooms: this.rooms,
-            games: this.games
+            games: this.games,
+            ships: this.shipsPos
         }
     }
 
@@ -74,6 +77,10 @@ class DBStorage {
 
     getRoomById(id: number): IRoom | undefined {
         return this.rooms.find((room: IRoom) => room.roomId === id);
+    }
+
+    addShips(shipData: IShips): void {
+        this.shipsPos.push(shipData);
     }
 }
 
