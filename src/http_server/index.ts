@@ -23,10 +23,9 @@ export const httpServer = http.createServer(function (req, res) {
 });
 
 const wss = new WebSocketServer({ port: 3000 });
-let userId = 0;
 
 wss.on('connection', (ws: WebSocketWithID) => {
-    ws.id = userId++
+    ws.id = Date.now() * 10;
     ws.on('error', console.error);
 
     ws.on('message', (data: string) => mainHandler(ws, wss, data));

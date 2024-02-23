@@ -1,9 +1,9 @@
 import DBStorage from '../db/storage';
-import { Server } from 'ws';
 import { WebSocketWithID } from '../http_server';
-import {IShips} from '../types';
+import { Server } from "ws";
+import {IShips, IUser} from '../types';
 
-export const startGameHandler = (messageData: string, ws: WebSocketWithID) => {
+export const startGameHandler = (messageData: string, ws: WebSocketWithID, wss: Server) => {
   const getData = (msg: string): IShips => JSON.parse(msg);
 
   const { ships, indexPlayer, gameId } = getData(messageData);
@@ -19,5 +19,17 @@ export const startGameHandler = (messageData: string, ws: WebSocketWithID) => {
     id: ws.id,
   };
 
-  ws.send(JSON.stringify(response));
+  const players = DBStorage.getAll().games.filter(game => game.idGame === gameId)![0].players;
+  const firstPlayerId = (players as IUser[])[0].id;
+
+  wss.clients.forEach((client: WebSocketWithID) => {
+    if (client.id === indexPlayer) {
+      client.send(JSON.stringify(response));
+      client.send(JSON.stringify({
+        type: 'turn',
+        data: JSON.stringify({currentPlayer: firstPlayerId}),
+        id: 0,
+      }));
+    }
+  });
 };

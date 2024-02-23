@@ -6,17 +6,18 @@ export const roomHandler = (ws: WebSocketWithID, wss: Server): void => {
   const indexRoom = DBStorage.createRoom();
 
   ws.send(JSON.stringify({
-    type: "add_user_to_room",
+    type: 'add_user_to_room',
     data: JSON.stringify({
       indexRoom,
     }),
     id: 0
   }));
 
-  const userName = DBStorage.getUserById(ws.id as number)?.name;
+  const userId = ws.id as number
+  const userName = DBStorage.getUserById(userId)?.name;
 
   if(userName) {
-    DBStorage.updateRoom(ws.id as number, userName);
+    DBStorage.updateRoom(indexRoom, userName, userId);
   }
     const roomsWithOneUser = DBStorage.getRoomsWithOneUser();
 
@@ -46,7 +47,6 @@ export const joinRoomHandler = (messageData: string, ws: WebSocketWithID, wss: S
     const secondPlayer = DBStorage.getUserById(ws.id as number);
 
     const { idGame } = DBStorage.createGame([{ name: singlePlayer.name, id: singlePlayer.index }, secondPlayer!], indexRoom);
-
     wss.clients.forEach((client: WebSocketWithID) => {
       if(client.id === ws.id) {
         client.send(JSON.stringify({
@@ -57,6 +57,9 @@ export const joinRoomHandler = (messageData: string, ws: WebSocketWithID, wss: S
           }),
           id: 0
         }));
+
+        DBStorage.removeFullRoomsAndRoomWithUserInGame(client.id as number);
+
       } else if (client.id === singlePlayer.index) {
         client.send(JSON.stringify({
           type: "create_game",
@@ -69,4 +72,16 @@ export const joinRoomHandler = (messageData: string, ws: WebSocketWithID, wss: S
       }
     });
   }
+
+  const rooms = DBStorage.getAll().rooms;
+
+  wss.clients.forEach((client: WebSocketWithID) => {
+    client.send(
+      JSON.stringify({
+        type: 'update_room',
+        data: JSON.stringify(rooms),
+        id: 0,
+      })
+    );
+  });
 };
