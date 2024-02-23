@@ -46,3 +46,22 @@ export interface IShips {
   ships: IShip[];
   indexPlayer: number;
 }
+
+export interface IShot {
+  gameId: number;
+  x?: number;
+  y?: number;
+  indexPlayer: number;
+}
+
+export type attackStatus = "miss"|"killed"|"shot";
+
+export interface IAttackStatus {
+  status: attackStatus;
+  win: boolean;
+}
+
+export interface IWinner {
+  name: string;
+  wins: number;
+}

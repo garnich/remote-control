@@ -1,9 +1,10 @@
 import { Server } from 'ws';
 import { regHandler } from './regHandler';
-import {joinRoomHandler, roomHandler} from './roomHandler';
+import { joinRoomHandler, roomHandler } from './roomHandler';
 import { IMessage } from '../types';
 import { WebSocketWithID } from '../http_server';
-import {startGameHandler} from './startGameHandler';
+import { startGameHandler } from './startGameHandler';
+import { attackHandler } from './attackHandler';
 
 export const mainHandler = (ws: WebSocketWithID, wss: Server, data: string): string | string[] => {
     const message: IMessage = JSON.parse(data as string);
@@ -22,7 +23,11 @@ export const mainHandler = (ws: WebSocketWithID, wss: Server, data: string): str
     }
 
     if(type === 'add_ships') {
-        startGameHandler(message.data, ws)
+        startGameHandler(message.data, ws, wss);
+    }
+
+    if(type === 'attack' || type === 'randomAttack') {
+        attackHandler(message.data, ws, wss);
     }
 
     return '';

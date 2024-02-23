@@ -1,16 +1,18 @@
-import {IUser, IRoom, IGame, IUserData, IRoomUsers, IShips } from "../types";
+import {IUser, IRoom, IGame, IUserData, IRoomUsers, IShips, IWinner } from "../types";
 
 class DBStorage {
     public users: IUserData[];
     public rooms: IRoom[];
     public games: IGame[];
-    public shipsPos: IShips[]
+    public shipsPos: IShips[];
+    public winners: IWinner[];
 
     constructor() {
         this.users = [];
         this.rooms = [];
         this.games = []
         this.shipsPos = [];
+        this.winners = [];
     }
 
     getAll() {
@@ -30,7 +32,7 @@ class DBStorage {
 
     createGame(usersData: IUser[] | IRoomUsers, roomId: number): IGame {
         const newGame = {
-            idGame: this.games.length,
+            idGame: Date.now(),
             players: usersData
         }
 
@@ -42,23 +44,29 @@ class DBStorage {
     }
 
     createRoom(): number {
-        const rooms = this.rooms.push({
-            roomId: this.rooms.length,
+        const newRoom = {
+            roomId: Date.now(),
             roomUsers: []
-        });
+        };
 
-        return rooms - 1;
+        this.rooms.push(newRoom);
+
+        return newRoom.roomId;
     }
 
-    updateRoom(id: number, name: string): void {
-        const existRoom = this.rooms.filter((room) => {
+    updateRoom(id: number, name: string, userId: number): void {
+        const existRoom = this.rooms.find((room) => {
             return room.roomId === id;
         });
 
-        existRoom[0].roomUsers.push({
+        existRoom!.roomUsers.push({
             name,
-            index: id
+            index: userId
         });
+    }
+
+    removeFullRoomsAndRoomWithUserInGame(id: number): void {
+        this.rooms = this.rooms.filter((room) => room.roomUsers.length < 2 && room.roomUsers[0].index !== id)
     }
 
     getRoomsWithOneUser(): IRoom[] {
@@ -79,8 +87,18 @@ class DBStorage {
         return this.rooms.find((room: IRoom) => room.roomId === id);
     }
 
+    getDefendPlayerId(indexPlayer: number, gameId: number): number {
+        const currentGame = this.games.filter((game) => game.idGame === gameId);
+        const defendPlayer = (currentGame[0].players as IUser[]).filter((player :IUser) => player.id !== indexPlayer);
+        return defendPlayer[0].id;
+    }
+
     addShips(shipData: IShips): void {
         this.shipsPos.push(shipData);
+    }
+
+    getShipsDataByIds(gameId: number, playerId: number): IShips {
+        return this.shipsPos.find(ship => ship.gameId === gameId && ship.indexPlayer === playerId)!
     }
 }
 
