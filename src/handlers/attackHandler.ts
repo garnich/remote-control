@@ -2,6 +2,7 @@ import { WebSocketWithID } from '../http_server';
 import DBStorage from '../db/storage';
 import {attackStatus, IAttackStatus, IShip, IShot} from '../types';
 import { Server } from "ws";
+import {updateWinnersHandler} from "./updatedWinnersHandler";
 
 export const attackHandler = (messageData: string, ws: WebSocketWithID, wss: Server) => {
   const getData = (msg: string): IShot => JSON.parse(msg);
@@ -12,6 +13,8 @@ export const attackHandler = (messageData: string, ws: WebSocketWithID, wss: Ser
   const defendPlayerId = DBStorage.getDefendPlayerId(indexPlayer, gameId)
 
   const { status, win } = getAttackStatus(gameId, defendPlayerId, x, y);
+
+  win && DBStorage.addWinner(indexPlayer);
 
   const turnId = status === 'killed' ||  status === 'shot' ? indexPlayer : defendPlayerId;
 
@@ -29,15 +32,19 @@ export const attackHandler = (messageData: string, ws: WebSocketWithID, wss: Ser
 
       client.send(JSON.stringify({
         type: 'turn',
-        data:  JSON.stringify({ currentPlayer: turnId }),
+        data: JSON.stringify({currentPlayer: turnId}),
         id: 0,
       }));
 
-      win && client.send(JSON.stringify({
-        type: 'finish',
-        data:  JSON.stringify({ winPlayer: indexPlayer }),
-        id: 0,
-      }));
+      if (win) {
+        client.send(JSON.stringify({
+          type: 'finish',
+          data: JSON.stringify({winPlayer: indexPlayer}),
+          id: 0,
+        }));
+
+        client.send(updateWinnersHandler());
+      }
     }
   });
 };

@@ -1,6 +1,7 @@
 import DBStorage from '../db/storage';
 import { Server } from 'ws';
 import { WebSocketWithID } from "../http_server";
+import { updateWinnersHandler } from "./updatedWinnersHandler";
 
 export const roomHandler = (ws: WebSocketWithID, wss: Server): void => {
   const indexRoom = DBStorage.createRoom();
@@ -30,6 +31,7 @@ export const roomHandler = (ws: WebSocketWithID, wss: Server): void => {
             id: 0,
           })
         );
+        client.send(updateWinnersHandler());
       });
     }
 };
@@ -83,5 +85,6 @@ export const joinRoomHandler = (messageData: string, ws: WebSocketWithID, wss: S
         id: 0,
       })
     );
+    client.send(updateWinnersHandler());
   });
 };

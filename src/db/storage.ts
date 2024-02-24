@@ -1,4 +1,4 @@
-import {IUser, IRoom, IGame, IUserData, IRoomUsers, IShips, IWinner } from "../types";
+import { IUser, IRoom, IGame, IUserData, IRoomUsers, IShips, IWinner } from "../types";
 
 class DBStorage {
     public users: IUserData[];
@@ -20,7 +20,8 @@ class DBStorage {
             users: this.users,
             rooms: this.rooms,
             games: this.games,
-            ships: this.shipsPos
+            ships: this.shipsPos,
+            winners: this.winners,
         }
     }
 
@@ -28,6 +29,25 @@ class DBStorage {
         this.users.push(userData);
 
         return this.users;
+    }
+
+    getWinners(): IWinner[] {
+        return this.winners;
+    }
+
+    addWinner(id: number): void {
+        const user = this.users.find((user) => user.id === id)!;
+        const winnerIdx = this.winners.findIndex((winner) => winner.name === user.name);
+
+        if (winnerIdx < 0) {
+            this.winners.push({
+                name: user.name,
+                wins: 1,
+            })
+        } else {
+            const winner = this.winners[winnerIdx];
+            winner.wins++;
+        }
     }
 
     createGame(usersData: IUser[] | IRoomUsers, roomId: number): IGame {
